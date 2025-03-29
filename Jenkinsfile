@@ -13,7 +13,8 @@ pipeline {
                 sh '''
                     echo "Installing dependencies..."
                     npm install -g pnpm
-                    
+                    pnpm setup                         # This creates the required global bin directory
+                    source ~/.bashrc                   # Refresh environment
                     pnpm install -g typescript ts-node # Install TypeScript globally
                     pnpm install                       # Install project dependencies
                     
