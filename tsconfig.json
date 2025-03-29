@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+      "target": "ESNext",
+      "module": "CommonJS",
+      "moduleResolution": "node",
+      // "outDir": "./dist",
+      "rootDir": "./src",
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "moduleDetection": "force",
+      "resolveJsonModule": true
+    },
+    "include": ["src/**/*.ts", "src/index.ts"],
+    "exclude": ["node_modules"]
+  }
+  //TODO: Enable strict on prod
