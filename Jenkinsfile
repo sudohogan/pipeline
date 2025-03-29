@@ -13,13 +13,19 @@ pipeline {
                 sh '''
                     echo "Installing dependencies..."
                     npm install -g pnpm
-                    pnpm setup                         # This creates the required global bin directory
-                    source ~/.bashrc                   # Refresh environment
-                    pnpm install -g typescript ts-node # Install TypeScript globally
-                    pnpm install                       # Install project dependencies
+
+                    # Manual setup for Alpine compatibility
+                    export PNPM_HOME="/usr/local/bin"
+                    export PATH="$PNPM_HOME:$PATH"
+                    
+                    echo "Installing TypeScript..."
+                    pnpm add -g typescript ts-node
+                    
+                    echo "Installing project dependencies..."
+                    pnpm install
                     
                     echo "Running app.ts..."
-                    ts-node src/app.ts                 # Execute the TypeScript file
+                    ts-node src/app.ts
                 '''
             }
         }
