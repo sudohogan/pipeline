@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Install & Run Node.js App') {
             agent {
-                docker { image 'node:16-alpine' }  // Lightweight Node.js image
+                docker { image 'node:20-alpine' }  // Lightweight Node.js image
             }
             steps {
                 sh '''
