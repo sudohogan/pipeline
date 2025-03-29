@@ -4,14 +4,16 @@ pipeline {
     stages {
         stage('Install & Run Node.js App') {
             agent {
-                docker { image 'node:20-alpine' }
+                docker { 
+                    image 'node:20-alpine'
+                    args '-u root --env SHELL=/bin/sh'  // Explicitly set shell
+                }
             }
             steps {
                 sh '''
                     echo "Installing dependencies..."
                     npm install -g pnpm
-                    pnpm setup                         # This creates the required global bin directory
-                    source ~/.bashrc                   # Refresh environment
+                    
                     pnpm install -g typescript ts-node # Install TypeScript globally
                     pnpm install                       # Install project dependencies
                     
