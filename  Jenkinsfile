@@ -14,7 +14,7 @@ pipeline {
                     pnpm install                       # Install project dependencies
                     
                     echo "Running app.ts..."
-                    ts-node pipe/app.ts                   # Execute the TypeScript file
+                    ts-node src/app.ts                   # Execute the TypeScript file
                 '''
             }
         }
