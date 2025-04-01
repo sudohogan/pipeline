@@ -2,12 +2,17 @@ pipeline {
   agent none
 
   stages {
-    stage('Checkout') {
-      steps {
-        sh 'echo passed'
-        git branch: 'main', url: 'https://github.com/sudohogan/pipeline.git'
-      }
-    }
+        stage('Checkout') {
+            agent {  // Add agent here or to individual stages
+                docker {
+                    image 'node:18-alpine'  // Example: Use Node.js container
+                    args '-u root'  // Optional: Run as root for installations
+                }
+            }
+            steps {
+                git branch: 'main', url: 'https://github.com/sudohogan/pipeline.git'
+            }
+        }
     stage('Build and Test') {
       steps {
                 sh ''' 
