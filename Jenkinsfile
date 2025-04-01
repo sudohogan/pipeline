@@ -1,19 +1,19 @@
 pipeline {
-  agent none
+  agent node
 
   stages {
         stage('Checkout') {
-            agent {  // Add agent here or to individual stages
-                docker {
-                    image 'node:18-alpine'  // Example: Use Node.js container
-                    //args '-u root'  // Optional: Run as root for installations
-                }
-            }
             steps {
                 git branch: 'main', url: 'https://github.com/sudohogan/pipeline.git'
             }
         }
     stage('Build and Test') {
+        agent {  // Add agent here or to individual stages
+            docker {
+                image 'node:18-alpine'  // Example: Use Node.js container
+                //args '-u root'  // Optional: Run as root for installations
+            }
+        }
       steps {
                 sh ''' 
                     echo "Installing dependencies..."
