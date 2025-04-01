@@ -6,7 +6,7 @@ pipeline {
             agent {  // Add agent here or to individual stages
                 docker {
                     image 'node:18-alpine'  // Example: Use Node.js container
-                    args '-u root'  // Optional: Run as root for installations
+                    //args '-u root'  // Optional: Run as root for installations
                 }
             }
             steps {
