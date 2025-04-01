@@ -2,12 +2,15 @@ FROM node:latest
 
 WORKDIR /app
 
-COPY package*.json /app
+# Install pnpm globally
+RUN npm install -g pnpm
 
-RUN yarn install
+COPY package.json pnpm-lock.yaml ./
+
+RUN pnpm install
 
 COPY . ./app
 
-EXPOSE 3003 
+EXPOSE 3005 
 
 CMD [ "pnpm", "start" ]
