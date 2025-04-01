@@ -41,22 +41,29 @@ pipeline {
             }
         }
         
-        stage('Update Deployment File') {
-            agent any  // Add agent
+        stage('Build and Push to Docker Hub') {
+            agent any
             environment {
-                GIT_REPO_NAME = "pipeline"
-                GIT_USER_NAME = "sudohogan"
+                DOCKER_IMAGE = "sudohogan/my-node-app:${BUILD_NUMBER}"
             }
             steps {
-                withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker',
+                    usernameVariable: 'DOCKER_USERNAME',
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )]) {
                     sh '''
-                        git config user.email "hoganizy85@gmail.com"
-                        git config user.name "Isreal Hogan"
-                        BUILD_NUMBER=${BUILD_NUMBER}
-                        sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                        git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                        git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-                        git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+                        # Login to Docker Hub
+                        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+                        # Build Docker image (adjust Dockerfile path as needed)
+                        docker build -t ${DOCKER_IMAGE} .
+
+                        # Push to Docker Hub
+                        docker push ${DOCKER_IMAGE}
+
+                        # Clean up
+                        docker logout
                     '''
                 }
             }
