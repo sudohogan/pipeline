@@ -1,7 +1,14 @@
+@Library("shared-lib") _
 pipeline {
     agent none  // Top-level agent none requires node blocks in stages
 
     stages {
+        stage('hello') {
+            steps{
+                helloWorld()
+            }
+        }
+
         stage('Checkout') {
             agent any  // Add agent to this stage
             steps {
@@ -35,12 +42,23 @@ pipeline {
                 SONAR_URL = "https://congenial-doodle-6xp9qj46xjr2545-9000.app.github.dev"
             }
             steps {
-                withCredentials([string(credentialsId: 'sonar', variable: 'sonar')]) {
-                    // Your SonarQube analysis commands
+                withCredentials([string(credentialsId: 'sonar', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                        # Install SonarScanner if not present
+                        npm install -g sonarqube-scanner
+                        
+                        # Run analysis (for Node.js/TS projects)
+                        sonar-scanner \
+                            -Dsonar.projectKey=your-project-key \
+                            -Dsonar.host.url=${SONAR_URL} \
+                            -Dsonar.login=${SONAR_TOKEN} \
+                            -Dsonar.sources=src \
+                            -Dsonar.tests=test \
+                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+                    '''
                 }
             }
         }
-        
         stage('Build and Push to Docker Hub') {
             agent any
             environment {
@@ -75,7 +93,31 @@ pipeline {
             echo "✅ Success: Test app ran successfully!"
         }
         failure {
-            echo "❌ Failure: Pipeline failed! Check logs for errors."
+            echo "❌ Failure: Pipeline failed! Sending Telegram alert..."
+            script {
+                // Get basic build info
+                def jobName = "sudohogan/my-node-app"
+                def duration = currentBuild.durationString.replace(' and counting', '')
+
+                // Message content
+                def message = """
+                🚨 *Pipeline Failed* 🚨
+                *Job*: ${jobName}
+                *Duration*: ${duration}
+                """.stripIndent()
+
+                // Send to Telegram (using curl)
+                withCredentials([string(credentialsId: 'telegram-bot-token', variable: 'BOT_TOKEN'), 
+                                string(credentialsId: 'telegram-chatId', variable: 'CHAT_ID')]) {
+                    sh """
+                        curl -s -X POST \
+                        https://api.telegram.org/bot${BOT_TOKEN}/sendMessage \
+                        -d chat_id=${CHAT_ID} \
+                        -d text="${message}" \
+                        -d parse_mode="Markdown"
+                    """
+                }
+            }
         }
     }
 }
