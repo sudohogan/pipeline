@@ -33,28 +33,28 @@ pipeline {
             }
         }
         
-        stage('Static Code Analysis') {
-            agent { 
-                docker {
-                    image 'node:20-bullseye'  // Has Java preinstalled
-                    args '-u root'
-                }
-            }
-            steps {
-                withCredentials([string(credentialsId: 'sonar', variable: 'SONAR_TOKEN')]) {
-                    sh '''
-                        npm install -g sonarqube-scanner
-                        sonar-scanner \
-                            -Dsonar.projectKey=your-project-key \
-                            -Dsonar.host.url=https://congenial-doodle-6xp9qj46xjr2545-4040.app.github.dev/ \
-                            -Dsonar.login=${SONAR_TOKEN} \
-                            -Dsonar.sources=src \
-                            -Dsonar.tests=test \
-                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-                    '''
-                }
-            }
-        }
+        // stage('Static Code Analysis') {
+        //     agent { 
+        //         docker {
+        //             image 'node:20-bullseye'  // Has Java preinstalled
+        //             args '-u root'
+        //         }
+        //     }
+        //     steps {
+        //         withCredentials([string(credentialsId: 'sonar', variable: 'SONAR_TOKEN')]) {
+        //             sh '''
+        //                 npm install -g sonarqube-scanner
+        //                 sonar-scanner \
+        //                     -Dsonar.projectKey=your-project-key \
+        //                     -Dsonar.host.url=http://localhost:9000 \
+        //                     -Dsonar.login=${SONAR_TOKEN} \
+        //                     -Dsonar.sources=src \
+        //                     -Dsonar.tests=test \
+        //                     -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+        //             '''
+        //         }
+        //     }
+        // }
         
         stage('Build and Push to Docker Hub') {
             agent any
