@@ -46,7 +46,7 @@ pipeline {
                         npm install -g sonarqube-scanner
                         sonar-scanner \
                             -Dsonar.projectKey=your-project-key \
-                            -Dsonar.host.url=${https://congenial-doodle-6xp9qj46xjr2545-9000.app.github.dev} \
+                            -Dsonar.host.url=https://congenial-doodle-6xp9qj46xjr2545-9000.app.github.dev \
                             -Dsonar.login=${SONAR_TOKEN} \
                             -Dsonar.sources=src \
                             -Dsonar.tests=test \
