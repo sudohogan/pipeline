@@ -41,7 +41,7 @@ pipeline {
                 }
             }
             environment {
-                SONAR_URL = "https://congenial-doodle-6xp9qj46xjr2545-9000.app.github.dev"
+                SONAR_URL = "${env.SONAR_URL}"
             }
             steps {
                 withCredentials([string(credentialsId: 'sonar', variable: 'SONAR_TOKEN')]) {
