@@ -1,4 +1,4 @@
-@Library("shared-lib") _
+@Library("shared-lib@main") _
 pipeline {
     agent none  // Top-level agent none requires node blocks in stages
 
