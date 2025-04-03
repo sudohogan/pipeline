@@ -5,7 +5,7 @@ pipeline {
     stages {
         stage('hello') {
             steps{
-                helloWorld()
+                helloWorld.shoutOut()
             }
         }
 
