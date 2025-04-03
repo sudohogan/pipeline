@@ -37,7 +37,12 @@ pipeline {
         }
         
         stage('Static Code Analysis') {
-            agent any  // Add agent
+            agent { 
+                docker {
+                    image 'node:20-alpine'
+                    args '-u root'  // Needed for package installations
+                }
+            }
             environment {
                 SONAR_URL = "https://congenial-doodle-6xp9qj46xjr2545-9000.app.github.dev"
             }
@@ -96,26 +101,25 @@ pipeline {
             echo "❌ Failure: Pipeline failed! Sending Telegram alert..."
             script {
                 // Get basic build info
-                def jobName = "sudohogan/my-node-app"
                 def duration = currentBuild.durationString.replace(' and counting', '')
-
                 // Message content
                 def message = """
                 🚨 *Pipeline Failed* 🚨
-                *Job*: ${jobName}
                 *Duration*: ${duration}
                 """.stripIndent()
 
                 // Send to Telegram (using curl)
-                withCredentials([string(credentialsId: 'telegram-bot-token', variable: 'BOT_TOKEN'), 
-                                string(credentialsId: 'telegram-chatId', variable: 'CHAT_ID')]) {
-                    sh """
+                withCredentials([
+                    string(credentialsId: 'telegram-bot-token', variable: 'BOT_TOKEN'),
+                    string(credentialsId: 'telegram-chatId', variable: 'CHAT_ID')
+                    ]) {
+                    sh '''
                         curl -s -X POST \
-                        https://api.telegram.org/bot${BOT_TOKEN}/sendMessage \
-                        -d chat_id=${CHAT_ID} \
+                        "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
+                        -d chat_id=$CHAT_ID \
                         -d text="${message}" \
-                        -d parse_mode="Markdown"
-                    """
+                        -d parse_mode=Markdown
+                    '''
                 }
             }
         }
