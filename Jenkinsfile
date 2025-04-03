@@ -40,16 +40,13 @@ pipeline {
                     args '-u root'
                 }
             }
-            environment {
-                SONAR_URL = "${env.SONAR_URL}"
-            }
             steps {
                 withCredentials([string(credentialsId: 'sonar', variable: 'SONAR_TOKEN')]) {
                     sh '''
                         npm install -g sonarqube-scanner
                         sonar-scanner \
                             -Dsonar.projectKey=your-project-key \
-                            -Dsonar.host.url=${SONAR_URL} \
+                            -Dsonar.host.url=${https://congenial-doodle-6xp9qj46xjr2545-9000.app.github.dev} \
                             -Dsonar.login=${SONAR_TOKEN} \
                             -Dsonar.sources=src \
                             -Dsonar.tests=test \
